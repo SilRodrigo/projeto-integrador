@@ -1,11 +1,11 @@
-import { IUsuarioCreateDto, IUpdateUsuarioDto } from "../dtos"
+import { IUserCreateDto, IUpdateUserDto } from "../dtos"
 
-export const userCreateMock: IUsuarioCreateDto = {
-  nome: "teste",
-  senha: "123456"
+export const userCreateMock: IUserCreateDto = {
+  email: "teste",
+  password: "123456"
 }
 
-export const updateUserMock: IUpdateUsuarioDto = {
-  nome: "teste",
-  senha: "123456"
+export const updateUserMock: IUpdateUserDto = {
+  email: "teste",
+  password: "123456"
 }

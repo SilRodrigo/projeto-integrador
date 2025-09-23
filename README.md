@@ -96,7 +96,7 @@ Crie as tabelas no banco de dados:
 npm run  prisma:db-push  --workspace  backend
 
 ```
-Para criar os usuarios, rode o *script_criacao_usuario.sql*
+Para criar os users, rode o *script_criacao_user.sql*
 
   
 

@@ -41,7 +41,7 @@ export abstract class PrismaBaseRepository<T extends keyof typeof prismaClient, 
         return this.instance(entity);
     }
 
-    async delete(id: number, $transaction?: PrismaClient): Promise<void> {
+    async delete(id: string, $transaction?: PrismaClient): Promise<void> {
         const repository = $transaction?.[this.index] || this.repository;
         await repository.delete({
             where: { id }
@@ -64,7 +64,7 @@ export abstract class PrismaBaseRepository<T extends keyof typeof prismaClient, 
         return entity ? this.instance(entity) : null;
     }
 
-    async findById(id: number, include?: I | false, $transaction?: PrismaClient): Promise<E | null> {
+    async findById(id: string, include?: I | false, $transaction?: PrismaClient): Promise<E | null> {
         if (!id) return null;
 
         return this.findByUnique({ id }, include, $transaction);

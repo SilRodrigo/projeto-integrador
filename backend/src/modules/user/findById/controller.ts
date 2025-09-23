@@ -1,24 +1,24 @@
 import { Response } from 'express';
 import { errorResponse, successResponse } from '../../../core/helpers/response';
 import { IController } from '../../../core/types/Controller';
-import { IPessoa } from '../../../core/entities/pessoa';
-import { IPessoaFindByIdUseCase } from './useCase';
+import { IUser } from '../../../core/entities/user';
+import { IUserFindByIdUseCase } from './useCase';
 
 interface IFactoryParams {
-    pessoaFindByIdUseCase: IPessoaFindByIdUseCase;
+    userFindByIdUseCase: IUserFindByIdUseCase;
 }
 
-export interface IPessoaFindByIdController extends IController<IPessoa> { }
+export interface IUserFindByIdController extends IController<IUser> { }
 
-export default function pessoaFindByIdControllerFactory({
-    pessoaFindByIdUseCase
-}: IFactoryParams): IPessoaFindByIdController {
+export default function userFindByIdControllerFactory({
+    userFindByIdUseCase
+}: IFactoryParams): IUserFindByIdController {
     return {
         handle: async (request, response: Response): Promise<Response> => {
             try {
                 const { id } = request.params;
 
-                const { data, message } = await pessoaFindByIdUseCase.execute(Number(id));
+                const { data, message } = await userFindByIdUseCase.execute(id);
 
                 return successResponse(response, data, message);
             } catch (err: any) {
