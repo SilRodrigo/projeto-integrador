@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { PrismaUserRepository } from "../repositories";
+import { PrismaUsuarioRepository } from "../repositories";
 import { errorResponse } from "../core/helpers/response";
-import { IUser } from "../core/entities/user";
+import { IUsuario } from "../core/entities/usuario";
 import { AwilixContainer } from "awilix";
 
 export interface AuthRequest extends Request {
-  user?: IUser;
+  usuario?: IUsuario;
   container?: AwilixContainer<{
-    prismaUserRepository: PrismaUserRepository;
+    prismaUsuarioRepository: PrismaUsuarioRepository;
   }>;
 }
 
@@ -24,14 +24,14 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
 
-    const userRepository = req.container!.cradle.prismaUserRepository as PrismaUserRepository;
-    const user = await userRepository.findById(decoded.userId);
+    const usuarioRepository = req.container!.cradle.prismaUsuarioRepository as PrismaUsuarioRepository;
+    const usuario = await usuarioRepository.findById(decoded.usuarioId);
 
-    if (!user) {
+    if (!usuario) {
       return errorResponse(res, new Error("Usuário não encontrado"), 401);
     }
 
-    req.user = user;
+    req.usuario = usuario;
     next();
   } catch (error: any) {
     if (error instanceof jwt.TokenExpiredError) {

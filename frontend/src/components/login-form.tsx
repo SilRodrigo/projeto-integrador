@@ -15,7 +15,7 @@ export function LoginForm({
     ...props
 }: React.ComponentProps<"div">) {
     const { authenticate, error, isLoading } = useAuth();
-    const [email, setEmail] = useState('');
+    const [nome, setNome] = useState('');
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
@@ -24,8 +24,9 @@ export function LoginForm({
         event.preventDefault();
 
         try {
-            await authenticate({ email, password: password });
+            await authenticate({ nome, senha: password });
 
+            navigate('/pessoas');
         } catch (error) {
             console.error(error);
         }
@@ -38,12 +39,12 @@ export function LoginForm({
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-3">
-                                <Label htmlFor="email">Email</Label>
+                                <Label htmlFor="nome">Nome</Label>
                                 <Input
-                                    id="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    type="email"
+                                    id="nome"
+                                    value={nome}
+                                    onChange={(e) => setNome(e.target.value)}
+                                    type="nome"
                                     required
                                 />
                             </div>

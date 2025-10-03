@@ -1,5 +1,5 @@
 {
-  "name": "rdr-saas",
+  "name": "programacao-para-internet-univates",
   "private": true,
   "workspaces": [
     "backend",

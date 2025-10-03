@@ -1,5 +1,5 @@
 import { createContainer, InjectionMode, Lifetime } from "awilix";
-import { PrismaUserRepository } from "./repositories";
+import { PrismaUsuarioRepository } from "./repositories";
 
 const container = createContainer({
     injectionMode: InjectionMode.PROXY,
@@ -7,7 +7,7 @@ const container = createContainer({
 })
 
 export interface RequestContainer {
-    prismaUserRepository: PrismaUserRepository;
+    prismaUsuarioRepository: PrismaUsuarioRepository;
 }
 
 // Repositories

@@ -1,5 +1,7 @@
-import PrismaUserRepository from './implementations/prisma/UserRepository'
+import PrismaUsuarioRepository from './implementations/prisma/UsuarioRepository'
+import PrismaPessoaRepository from './implementations/prisma/PessoaRepository'
 
 export {
-    PrismaUserRepository,
+    PrismaUsuarioRepository,
+    PrismaPessoaRepository
 }

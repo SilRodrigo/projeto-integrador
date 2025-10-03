@@ -14,8 +14,8 @@ interface User {
 }
 
 interface LoginCredentials {
-  email: string;
-  password: string;
+  nome: string;
+  senha: string;
 }
 
 export function useAuth() {
@@ -32,7 +32,7 @@ export function useAuth() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:4000/api/v1/user/auth', {
+      const response = await fetch('http://localhost:4000/api/v1/usuario/auth', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

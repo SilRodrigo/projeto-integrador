@@ -1,6 +1,6 @@
 export interface Pessoa {
   id?: number;
-  email: string;
+  nome: string;
   email: string;
   telefone: string;
   dataNascimento: string;

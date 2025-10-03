@@ -1,24 +1,24 @@
 import { Response } from 'express';
 import { errorResponse, successResponse } from '../../../core/helpers/response';
 import { IController } from '../../../core/types/Controller';
-import { IUserDeleteUseCase } from './useCase';
-import { IUser } from '../../../core/entities/user';
+import { IUsuarioDeleteUseCase } from './useCase';
+import { IUsuario } from '../../../core/entities/usuario';
 
 interface IFactoryParams {
-    userDeleteUseCase: IUserDeleteUseCase;
+    usuarioDeleteUseCase: IUsuarioDeleteUseCase;
 }
 
-export interface IUserDeleteController extends IController<IUser> { }
+export interface IUsuarioDeleteController extends IController<IUsuario> { }
 
-export default function userDeleteControllerFactory({
-    userDeleteUseCase
-}: IFactoryParams): IUserDeleteController {
+export default function usuarioDeleteControllerFactory({
+    usuarioDeleteUseCase
+}: IFactoryParams): IUsuarioDeleteController {
     return {
         handle: async (request, response: Response): Promise<Response> => {
             const { id } = request.params;
 
             try {
-                await userDeleteUseCase.execute(id);
+                await usuarioDeleteUseCase.execute(Number(id));
 
                 return successResponse(response, null, 'Usuário excluído com sucesso.', 204);
             } catch (err: any) {
