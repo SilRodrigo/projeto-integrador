@@ -1,7 +1,9 @@
 import PrismaUsuarioRepository from './implementations/prisma/UsuarioRepository'
-import PrismaPessoaRepository from './implementations/prisma/PessoaRepository'
+import PrismaTreinoRepository from './implementations/prisma/TreinoRepository'
+import PrismaTipoRepository from './implementations/prisma/TipoRepository'
 
 export {
     PrismaUsuarioRepository,
-    PrismaPessoaRepository
+    PrismaTreinoRepository,
+    PrismaTipoRepository
 }

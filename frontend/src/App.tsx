@@ -1,13 +1,16 @@
 import './App.css'
 import Login from './pages/auth/Login'
-import Pessoa from './pages/Pessoa'
+import Pessoa from './pages/Treino'
 import Logout from './pages/auth/Logout'
 import { useAuth } from './hooks/useAuth'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import TreinoPage from './pages/Treino'
+import { AppMenu } from './components/app-menu'
+import ContentWrapper from './components/content-wrapper'
 
 function PrivateRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated } = useAuth();
-  
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -22,16 +25,19 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/logout" element={<Logout />} />
         <Route
-          path="/pessoas"
+          path="/treinos"
           element={
-            <PrivateRoute>
-              <Pessoa />
-            </PrivateRoute>
+            /* <PrivateRoute> */
+            <ContentWrapper>
+              <AppMenu />
+              <TreinoPage />
+            </ContentWrapper>
+            /* </PrivateRoute> */
           }
         />
         <Route
           path="/"
-          element={<Navigate to="/pessoas" replace />}
+          element={<Navigate to="/treinos" replace />}
         />
       </Routes>
     </BrowserRouter>

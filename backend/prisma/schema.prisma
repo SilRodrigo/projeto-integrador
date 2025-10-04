@@ -15,3 +15,17 @@ model Usuario {
   nome  String @db.VarChar(150)
   senha String @db.VarChar(200)
 }
+
+model Tipo {
+  id        Int      @id @default(autoincrement())
+  descricao String   @db.VarChar(100)
+  Treino    Treino[]
+}
+
+model Treino {
+  id        Int      @id @default(autoincrement())
+  dataHora  DateTime @map("data_hora")
+  descricao String   @db.VarChar(255)
+  tipo      Tipo     @relation(fields: [tipoId], references: [id])
+  tipoId    Int      @map("tipo_id")
+}
