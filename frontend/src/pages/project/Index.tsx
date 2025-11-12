@@ -8,91 +8,67 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-import { TreinoForm } from "@/components/treino-form"
+import { ProjectForm } from "@/components/forms/project"
 import {
     Alert,
     AlertDescription,
     AlertTitle,
 } from "@/components/ui/alert"
-import type { Treino } from "@/types/treino"
+import type { Project } from "@/types/project"
 import { useAuth } from "@/hooks/useAuth"
 import { format } from "date-fns"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
-import type { Tipo } from "@/types/tipo"
+import { Pencil, Trash } from "lucide-react"
+import { useNavigate } from "react-router-dom"
 
-export default function TreinoPage() {
+export default function ProjectPage() {
     const { user } = useAuth()
-    const [treinos, setTreinos] = useState<Treino[]>([])
-    const [tipos, setTipos] = useState<Tipo[]>([])
+    const [projetos, setProjetos] = useState<Project[]>([])
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
     const [formOpen, setFormOpen] = useState(false)
-    const [selectedTreino, setSelectedTreino] = useState<Treino | undefined>()
+    const [selectedProject, setSelectedProject] = useState<Project | undefined>()
 
-    const fetchTreinos = async () => {
+    const navigate = useNavigate();
+
+    const fetchProjetos = async () => {
         setIsLoading(true)
         setError(null)
 
         try {
-            const response = await fetch('http://localhost:4000/api/v1/treino', {
+            const response = await fetch('http://localhost:4000/api/v1/project', {
                 headers: {
                     'Authorization': `Bearer ${user?.token}`
                 }
             })
 
             if (!response.ok) {
-                throw new Error('Erro ao carregar treinos')
+                throw new Error('Erro ao carregar projetos')
             }
 
             const { data } = await response.json()
-            setTreinos(data.items || []);
+            setProjetos(data.items || []);
 
 
         } catch (err) {
-            setError('Falha ao carregar a lista de treinos')
+            /* setError('Falha ao carregar a lista de projetos') */
+            setProjetos([
+                { id: 1, name: 'Projeto Exemplo', description: 'Descrição do projeto exemplo', createdAt: new Date().toISOString(), createdBy: 1 },
+            ])
             console.error(err)
         } finally {
             setIsLoading(false)
         }
     }
 
-    const fetchTipos = async () => {
-        try {
-            const response = await fetch('http://localhost:4000/api/v1/tipo', {
-                headers: {
-                    'Authorization': `Bearer ${user?.token}`
-                }
-            })
-
-            if (!response.ok) {
-                throw new Error('Erro ao carregar tipos')
-            }
-
-            const { data } = await response.json()
-
-            if (!data.items.length) {
-                throw new Error('Nenhum tipo cadastrado')
-            }
-
-            setTipos(data.items || []);
-
-
-        } catch (err: any) {
-            setError(err.message)
-        } finally {
-            setIsLoading(false)
-        }
-    }
-
     useEffect(() => {
-        fetchTipos()
-        fetchTreinos()
+        fetchProjetos()
     }, [])
 
-    const handleCreate = async (data: Treino) => {
+    const handleCreate = async (data: Project) => {
         try {
-            const response = await fetch('http://localhost:4000/api/v1/treino', {
+            const response = await fetch('http://localhost:4000/api/v1/project', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,23 +78,23 @@ export default function TreinoPage() {
             })
 
             if (!response.ok) {
-                throw new Error('Erro ao criar treino')
+                throw new Error('Erro ao criar projeto')
             }
 
-            toast.success('Treino criada com sucesso!')
-            await fetchTreinos();
+            toast.success('Projeto criada com sucesso!')
+            await fetchProjetos();
         } catch (err) {
             console.error('Erro ao criar:', err)
-            toast.error('Erro ao criar treino')
+            toast.error('Erro ao criar projeto')
             throw err
         }
     }
 
-    const handleUpdate = async (data: Treino) => {
-        if (!selectedTreino?.id) return
+    const handleUpdate = async (data: Project) => {
+        if (!selectedProject?.id) return
 
         try {
-            const response = await fetch(`http://localhost:4000/api/v1/treino/${selectedTreino.id}`, {
+            const response = await fetch(`http://localhost:4000/api/v1/project/${selectedProject.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -128,25 +104,25 @@ export default function TreinoPage() {
             })
 
             if (!response.ok) {
-                throw new Error('Erro ao atualizar treino')
+                throw new Error('Erro ao atualizar projeto')
             }
 
-            toast.success('Treino atualizada com sucesso!')
-            await fetchTreinos()
+            toast.success('Projeto atualizada com sucesso!')
+            await fetchProjetos()
         } catch (err) {
             console.error('Erro ao atualizar:', err)
-            toast.error('Erro ao atualizar treino')
+            toast.error('Erro ao atualizar projeto')
             throw err
         }
     }
 
     const handleDelete = async (id: number) => {
-        if (!confirm('Tem certeza que deseja excluir esta treino?')) {
+        if (!confirm('Tem certeza que deseja excluir esta projeto?')) {
             return
         }
 
         try {
-            const response = await fetch(`http://localhost:4000/api/v1/treino/${id}`, {
+            const response = await fetch(`http://localhost:4000/api/v1/project/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${user?.token}`
@@ -154,20 +130,20 @@ export default function TreinoPage() {
             })
 
             if (!response.ok) {
-                throw new Error('Erro ao excluir treino')
+                throw new Error('Erro ao excluir projeto')
             }
 
-            toast.success('Treino excluída com sucesso!')
-            await fetchTreinos()
+            toast.success('Projeto excluída com sucesso!')
+            await fetchProjetos()
         } catch (err) {
             console.error('Erro ao excluir:', err)
-            toast.error('Erro ao excluir treino')
+            toast.error('Erro ao excluir projeto')
         }
     }
 
-    const handleSubmit = async (data: Treino) => {
+    const handleSubmit = async (data: Project) => {
         try {
-            if (selectedTreino) {
+            if (selectedProject) {
                 await handleUpdate(data)
             } else {
                 await handleCreate(data);
@@ -178,13 +154,17 @@ export default function TreinoPage() {
         }
     }
 
-    const openEditForm = (treino: Treino) => {
-        setSelectedTreino(treino)
+    const openEditForm = (project: Project) => {
+        setSelectedProject(project)
         setFormOpen(true)
     }
 
+    const goToProjectRequirements = (projectId: number) => {
+        navigate(`/projects/${projectId}/requirements`);
+    }
+
     const openCreateForm = () => {
-        setSelectedTreino(undefined)
+        setSelectedProject(undefined)
         setFormOpen(true)
     }
 
@@ -192,8 +172,8 @@ export default function TreinoPage() {
         <div className="container mx-auto py-6">
             <Toaster richColors />
             <div className="flex justify-between items-center mb-6">
-                <h1 className="text-2xl font-bold">Lista de Treinos</h1>
-                <Button onClick={openCreateForm}>Novo Treino</Button>
+                <h1 className="text-xl font-semibold">Lista de Projetos</h1>
+                <Button onClick={openCreateForm}>Novo Projeto</Button>
             </div>
 
             {error && (
@@ -207,9 +187,9 @@ export default function TreinoPage() {
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            <TableHead>Nome</TableHead>
                             <TableHead>Descrição</TableHead>
-                            <TableHead>Data e Hora</TableHead>
-                            <TableHead>Tipo</TableHead>
+                            <TableHead>Data de criação</TableHead>
                             <TableHead className="text-right">Ações</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -220,36 +200,48 @@ export default function TreinoPage() {
                                     Carregando...
                                 </TableCell>
                             </TableRow>
-                        ) : treinos.length === 0 ? (
+                        ) : projetos.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center">
-                                    Nenhuma treino cadastrado
+                                    Nenhum projeto cadastrado
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            treinos.map((treino) => (
-                                <TableRow key={treino.id}>
-                                    <TableCell>{treino.descricao}</TableCell>
+                            projetos.map((project) => (
+                                <TableRow key={project.id}>
+                                    <TableCell>{project.name}</TableCell>
+                                    <TableCell>{project.description}</TableCell>
                                     <TableCell>
-                                        {treino.dataHora && format(new Date(
-                                            (treino.dataHora.endsWith('Z') ? treino.dataHora : treino.dataHora + 'Z')
+                                        {project.createdAt && format(new Date(
+                                            (project.createdAt.endsWith('Z') ? project.createdAt : project.createdAt + 'Z')
                                         ), 'dd/MM/yyyy HH:mm')}
                                     </TableCell>
-                                    <TableCell>{treino.tipo?.descricao}</TableCell>
-                                    <TableCell className="text-right space-x-2">
+                                    <TableCell className="text-right space-x-2 flex items-center justify-end">
                                         <Button
                                             variant="outline"
+                                            className="bg-green-600 hover:bg-green-700 text-white hover:text-white cursor-pointer"
                                             size="sm"
-                                            onClick={() => openEditForm(treino)}
+                                            onClick={() => goToProjectRequirements(project.id)}
                                         >
-                                            Editar
+                                            Ir para requisitos
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="icon"
+                                            title="Editar"
+                                            className="cursor-pointer"
+                                            onClick={() => openEditForm(project)}
+                                        >
+                                           <Pencil />
                                         </Button>
                                         <Button
                                             variant="destructive"
-                                            size="sm"
-                                            onClick={() => treino.id && handleDelete(treino.id)}
+                                            size="icon"
+                                            title="Excluir"
+                                            className="cursor-pointer hover:bg-red-700"
+                                            onClick={() => project.id && handleDelete(project.id)}
                                         >
-                                            Excluir
+                                            <Trash />
                                         </Button>
                                     </TableCell>
                                 </TableRow>
@@ -259,13 +251,12 @@ export default function TreinoPage() {
                 </Table>
             </div>
 
-            <TreinoForm
+            <ProjectForm
                 open={formOpen}
                 onClose={() => setFormOpen(false)}
                 onSubmit={handleSubmit}
-                initialData={selectedTreino}
-                title={selectedTreino ? "Editar Treino" : "Novo Treino"}
-                tipoList={tipos}
+                initialData={selectedProject}
+                title={selectedProject ? "Editar Projeto" : "Novo Projeto"}
             />
         </div>
     )

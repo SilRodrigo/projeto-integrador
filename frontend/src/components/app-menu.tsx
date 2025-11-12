@@ -30,11 +30,11 @@ export function AppMenu() {
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>Menu</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="text-xl">Menu</NavigationMenuTrigger>
           <NavigationMenuContent className="z-10">
             <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/treinos" title="Treinos">
-                Lista dos cadastros, criação, edição e exclusão
+              <ListItem href="/home" title="Home">
+                Página inicial
               </ListItem>
               <ListItem href="/logout" title="Logout">
                 Deslogar da sua conta

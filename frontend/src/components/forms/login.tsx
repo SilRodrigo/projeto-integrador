@@ -15,7 +15,7 @@ export function LoginForm({
     ...props
 }: React.ComponentProps<"div">) {
     const { authenticate, error, isLoading } = useAuth();
-    const [nome, setNome] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
     const navigate = useNavigate();
@@ -24,9 +24,9 @@ export function LoginForm({
         event.preventDefault();
 
         try {
-            await authenticate({ nome, senha: password });
+            await authenticate({ email, password });
 
-            navigate('/pessoas');
+            navigate('/');
         } catch (error) {
             console.error(error);
         }
@@ -39,12 +39,13 @@ export function LoginForm({
                     <form onSubmit={handleSubmit}>
                         <div className="flex flex-col gap-6">
                             <div className="grid gap-3">
-                                <Label htmlFor="nome">Nome</Label>
+                                <Label htmlFor="email">Email</Label>
                                 <Input
-                                    id="nome"
-                                    value={nome}
-                                    onChange={(e) => setNome(e.target.value)}
-                                    type="nome"
+                                    id="email"
+                                    value={email}
+                                    placeholder="Informe seu email"
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    type="text"
                                     required
                                 />
                             </div>
@@ -55,6 +56,7 @@ export function LoginForm({
                                 <Input
                                     id="password"
                                     type="password"
+                                    placeholder="Informe sua senha"
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)} />

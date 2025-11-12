@@ -14,8 +14,8 @@ interface User {
 }
 
 interface LoginCredentials {
-  nome: string;
-  senha: string;
+  email: string;
+  password: string;
 }
 
 export function useAuth() {
