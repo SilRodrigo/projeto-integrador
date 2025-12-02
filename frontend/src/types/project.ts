@@ -1,7 +1,10 @@
+import type { Requirement } from "./requirement";
+
 export interface Project {
-    id: number;
+    id: string;
     name: string;
     description: string;
     createdAt: string;
-    createdBy: number;
+    createdBy: string;
+    requirements: Requirement[];
 }

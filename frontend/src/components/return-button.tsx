@@ -10,7 +10,7 @@ export const ReturnButton = ({ href, title = "Voltar", ...props }: React.Compone
     }
 
     return (
-        <Button variant="outline" onClick={handleClick} {...props}>
+        <Button className="cursor-pointer" variant="outline" onClick={handleClick} {...props}>
             <ArrowLeft /> {title}
         </Button>
     )

@@ -1,81 +1,93 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from "react";
 
 interface AuthResponse {
   data: {
-    id: number;
     accessToken: string;
+    user: User;
   };
-  message: string;
 }
 
 interface User {
-  id: number;
-  token: string;
-}
-
-interface LoginCredentials {
+  id: string
   email: string;
-  password: string;
+  createdAt: Date
+  updatedAt: Date,
+  userType: 'ADMIN' | 'USER'
 }
 
 export function useAuth() {
-  const [user, setUser] = useState<User | null>(() => {
-    const savedUser = localStorage.getItem('@App:user');
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-  
-  const [isLoading, setIsLoading] = useState(false);
+  const [token, setToken] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const authenticate = async (credentials: LoginCredentials) => {
-    setError(null);
-    setIsLoading(true);
-
-    try {
-      const response = await fetch('http://localhost:4000/api/v1/usuario/auth', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(credentials)
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Erro ao fazer login');
-      }
-
-      const userData: User = {
-        id: data.data.id,
-        token: data.data.accessToken,
-      };
-
-      setUser(userData);
-      localStorage.setItem('@App:user', JSON.stringify(userData));
-
-      return data;
-      
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Erro ao fazer login';
-      setError(message);
-      throw err;
-    } finally {
+  useEffect(() => {
+    const savedToken = localStorage.getItem("authToken");
+    const savedUser = localStorage.getItem("user");
+    if (savedToken && savedUser) {
+      setToken(savedToken);
+      setUser(JSON.parse(savedUser));
+      setIsLoading(false);
+    } else {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const logout = () => {
+  const login = useCallback(async (email: string, password: string) => {
+    setError(null);
+
+    try {
+      const response = await fetch('http://localhost:4000/api/v1/user/auth', {
+        method: 'POST',
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Falha ao fazer login");
+      }
+
+      const { data }: AuthResponse = await response.json();
+
+      localStorage.setItem("authToken", data.accessToken);
+      setToken(data.accessToken);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      setUser(data.user);
+      setIsLoading(false);
+
+      return data;
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Erro desconhecido";
+      setError(errorMessage);
+      setIsLoading(false);
+      throw err;
+    }
+  }, []);
+
+  const logout = useCallback(() => {
+    localStorage.removeItem("authToken");
+    setToken(null);
     setUser(null);
-    localStorage.removeItem('@App:user');
-  };
+    setError(null);
+  }, []);
+
+  const getAuthHeader = useCallback(() => {
+    if (!token) return {};
+    return {
+      Authorization: `Bearer ${token}`,
+    };
+  }, [token]);
 
   return {
+    token,
     user,
-    authenticate,
-    logout,
-    isAuthenticated: !!user,
     isLoading,
-    error
+    error,
+    login,
+    logout,
+    getAuthHeader,
+    isAuthenticated: !!token,
   };
 }

@@ -3,6 +3,6 @@ export interface User {
   name: string;
   email: string;
   password: string;
-  type: string;
+  userType: 'ADMIN' | 'USER';
   createdAt: string;
 }

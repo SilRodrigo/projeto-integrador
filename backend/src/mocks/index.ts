@@ -1,1 +1,0 @@
-export { userCreateMock ,updateUserMock } from './user.mocks'

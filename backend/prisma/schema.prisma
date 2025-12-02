@@ -10,22 +10,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Usuario {
-  id    Int    @id @default(autoincrement())
-  nome  String @db.VarChar(150)
-  senha String @db.VarChar(200)
+model User {
+  id String   @id @default(uuid())
+  email String @unique
+  password String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userType UserType @default(USER)
+  projects Project[]
 }
 
-model Tipo {
-  id        Int      @id @default(autoincrement())
-  descricao String   @db.VarChar(100)
-  Treino    Treino[]
+model Project {
+  id String @id @default(uuid())
+  name String @db.VarChar(150)
+  description String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  requirements Requirement[]
 }
 
-model Treino {
-  id        Int      @id @default(autoincrement())
-  dataHora  DateTime @map("data_hora")
-  descricao String   @db.VarChar(255)
-  tipo      Tipo     @relation(fields: [tipoId], references: [id])
-  tipoId    Int      @map("tipo_id")
+model Requirement {
+  id String @id @default(uuid())
+  title String @db.VarChar(150)
+  description String? @db.Text
+  priority Priority @default(MEDIUM)
+  complexity Complexity @default(MEDIUM)
+  isRequired Boolean @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  versions RequirementVersion[]
+}
+
+model RequirementVersion {
+  id String @id @default(uuid())
+  versionNumber String @db.VarChar(10)
+  description String? @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  requirementId String
+  requirement Requirement @relation(fields: [requirementId], references: [id], onDelete: Cascade)
+}
+
+enum UserType {
+  ADMIN
+  USER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum Complexity {
+  LOW
+  MEDIUM
+  HIGH
 }

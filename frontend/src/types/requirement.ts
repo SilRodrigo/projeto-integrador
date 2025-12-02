@@ -1,12 +1,16 @@
-export type Priority = 'Low' | 'Medium' | 'High';
-export type Complexity = 'Low' | 'Medium' | 'High';
+import type { RequirementVersion } from "./requirementVersion";
+
+export type Priority = 'LOW' | 'MEDIUM' | 'HIGH';
+export type Complexity = 'LOW' | 'MEDIUM' | 'HIGH';
 
 export interface Requirement {
-    id: number;
+    id: string;
     title: string;
     description: string;
     priority: Priority;
     complexity: Complexity;
+    isRequired: boolean;
     createdAt: string;
-    projectId: number;
+    projectId: string;
+    versions: RequirementVersion[];
 }

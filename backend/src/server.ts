@@ -2,7 +2,7 @@ import express from 'express'
 import morgan from 'morgan'
 import cors from 'cors'
 
-import { routes } from './routes';
+import { routes } from './core/routes';
 import { scopePerRequest } from 'awilix-express';
 import container from './container';
 

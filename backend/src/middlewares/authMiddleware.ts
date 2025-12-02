@@ -1,14 +1,14 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { PrismaUsuarioRepository } from "../repositories";
-import { errorResponse } from "../core/helpers/response";
-import { IUsuario } from "../core/entities/usuario";
+import { PrismaUserRepository } from "../core/repositories";
+import { errorResponse } from "../helpers/response";
+import { IUser } from "../core/entities/user";
 import { AwilixContainer } from "awilix";
 
 export interface AuthRequest extends Request {
-  usuario?: IUsuario;
+  user?: IUser;
   container?: AwilixContainer<{
-    prismaUsuarioRepository: PrismaUsuarioRepository;
+    prismaUserRepository: PrismaUserRepository;
   }>;
 }
 
@@ -24,14 +24,14 @@ export const authMiddleware = async (req: AuthRequest, res: Response, next: Next
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
 
-    const usuarioRepository = req.container!.cradle.prismaUsuarioRepository as PrismaUsuarioRepository;
-    const usuario = await usuarioRepository.findById(decoded.usuarioId);
+    const userRepository = req.container!.cradle.prismaUserRepository as PrismaUserRepository;
+    const user = await userRepository.findById(decoded.userId);
 
-    if (!usuario) {
+    if (!user) {
       return errorResponse(res, new Error("Usuário não encontrado"), 401);
     }
 
-    req.usuario = usuario;
+    req.user = user;
     next();
   } catch (error: any) {
     if (error instanceof jwt.TokenExpiredError) {

@@ -6,7 +6,7 @@
     "frontend"
   ],
   "scripts": {
-    "dev": "concurrently \"npm run server:dev --workspace backend\" \"npm run dev --workspace frontend\"",
+    "dev": "npx concurrently \"npm run server:dev --workspace backend\" \"npm run dev --workspace frontend\"",
     "build": "npm run build --workspace backend && npm run build --workspace frontend",
     "install:all": "npm install"
   },

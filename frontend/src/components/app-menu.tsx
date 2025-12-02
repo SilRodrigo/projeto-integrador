@@ -9,36 +9,27 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu"
-
-const components: { title: string; href: string; description: string }[] = [
-  {
-    title: "Tabs",
-    href: "/docs/primitives/tabs",
-    description:
-      "A set of layered sections of content—known as tab panels—that are displayed one at a time.",
-  },
-  {
-    title: "Tooltip",
-    href: "/docs/primitives/tooltip",
-    description:
-      "A popup that displays information related to an element when the element receives keyboard focus or the mouse hovers over it.",
-  },
-]
+import { menuOptions } from "../config/menuOptions"
 
 export function AppMenu() {
+
+
   return (
     <NavigationMenu viewport={false}>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger className="text-xl">Menu</NavigationMenuTrigger>
+          <NavigationMenuTrigger className="text-xl pl-0">Menu</NavigationMenuTrigger>
           <NavigationMenuContent className="z-10">
-            <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-              <ListItem href="/home" title="Home">
-                Página inicial
-              </ListItem>
-              <ListItem href="/logout" title="Logout">
-                Deslogar da sua conta
-              </ListItem>
+            <ul className="grid gap-2 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr_1fr]">
+              {menuOptions.map((option) => (
+                <ListItem
+                  key={option.title}
+                  title={option.title}
+                  href={option.path}
+                >
+                  {option.description}
+                </ListItem>
+              ))}
             </ul>
           </NavigationMenuContent>
         </NavigationMenuItem>

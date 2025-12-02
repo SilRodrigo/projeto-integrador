@@ -1,16 +1,9 @@
-import { useState, useEffect } from "react"
-import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
 import type { Requirement } from "@/types/requirement"
 import { Textarea } from "../ui/textarea"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "../ui/select"
+import { BaseForm } from "./BaseForm"
 
 interface RequirementFormProps {
     open: boolean
@@ -18,6 +11,7 @@ interface RequirementFormProps {
     onSubmit: (data: Requirement) => Promise<void>
     initialData?: Requirement
     title: string
+    projectId: string
 }
 
 export function RequirementForm({
@@ -26,55 +20,30 @@ export function RequirementForm({
     onSubmit,
     initialData,
     title,
+    projectId,
 }: RequirementFormProps) {
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [formData, setFormData] = useState<Requirement>({
-        id: 0,
+    const defaultData: Requirement = {
+        id: '',
         title: "",
         description: "",
-        priority: "Low",
-        complexity: "Low",
+        priority: "LOW",
+        complexity: "LOW",
+        isRequired: true,
         createdAt: "",
-        projectId: 0,
-    })
-
-    useEffect(() => {
-        if (initialData) {
-            setFormData(initialData)
-        } else {
-            setFormData({
-                id: 0,
-                title: "",
-                description: "",
-                priority: "Low",
-                complexity: "Low",
-                createdAt: "",
-                projectId: 0,
-            })
-        }
-    }, [initialData])
-
-    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        setIsSubmitting(true)
-
-        try {
-            await onSubmit(formData)
-            onClose()
-        } catch (error) {
-            console.error("Erro ao salvar:", error)
-        } finally {
-            setIsSubmitting(false)
-        }
+        projectId,
+        versions: [],
     }
 
     return (
-        <Dialog open={open} onOpenChange={onClose}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>{title}</DialogTitle>
-                </DialogHeader>
-                <form onSubmit={handleSubmit} className="space-y-4">
+        <BaseForm<Requirement>
+            open={open}
+            onClose={onClose}
+            onSubmit={onSubmit}
+            initialData={initialData || defaultData}
+            title={title}
+        >
+            {(formData, setFormData) => (
+                <>
                     <div>
                         <Label htmlFor="title">Título</Label>
                         <Input
@@ -104,9 +73,9 @@ export function RequirementForm({
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Prioridades</SelectLabel>
-                                    <SelectItem value="Low">Baixa</SelectItem>
-                                    <SelectItem value="Medium">Média</SelectItem>
-                                    <SelectItem value="High">Alta</SelectItem>
+                                    <SelectItem value="LOW">Baixa</SelectItem>
+                                    <SelectItem value="MEDIUM">Média</SelectItem>
+                                    <SelectItem value="HIGH">Alta</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
@@ -122,23 +91,32 @@ export function RequirementForm({
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Complexidades</SelectLabel>
-                                    <SelectItem value="Low">Baixa</SelectItem>
-                                    <SelectItem value="Medium">Média</SelectItem>
-                                    <SelectItem value="High">Alta</SelectItem>
+                                    <SelectItem value="LOW">Baixa</SelectItem>
+                                    <SelectItem value="MEDIUM">Média</SelectItem>
+                                    <SelectItem value="HIGH">Alta</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                     </div>
-                    <div className="flex justify-end space-x-2">
-                        <Button variant="outline" type="button" onClick={onClose}>
-                            Cancelar
-                        </Button>
-                        <Button type="submit" disabled={isSubmitting}>
-                            {isSubmitting ? "Salvando..." : "Salvar"}
-                        </Button>
+                    <div>
+                        <Label htmlFor="isRequired">Tipo de Requisito</Label>
+                        <Select value={formData.isRequired ? "true" : "false"} onValueChange={(value: string) =>
+                            setFormData({ ...formData, isRequired: value === "true" })
+                        }>
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Selecione o tipo" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Tipos</SelectLabel>
+                                    <SelectItem value="true">Funcional</SelectItem>
+                                    <SelectItem value="false">Não-Funcional</SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                </>
+            )}
+        </BaseForm>
     )
 }

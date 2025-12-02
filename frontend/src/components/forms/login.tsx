@@ -7,14 +7,14 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState } from "react"
-import { useAuth } from "@/hooks/useAuth"
+import { useAuth } from "@/contexts/AuthContext"
 import { useNavigate } from "react-router-dom"
 
 export function LoginForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
-    const { authenticate, error, isLoading } = useAuth();
+    const { login, error, isLoading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -24,7 +24,7 @@ export function LoginForm({
         event.preventDefault();
 
         try {
-            await authenticate({ email, password });
+            await login(email, password);
 
             navigate('/');
         } catch (error) {
