@@ -66,7 +66,7 @@ export default function UserPage() {
     }
 
     return (
-        <div className="container mx-auto py-6">
+        <>
             <Toaster richColors />
 
             <ListHeader
@@ -94,6 +94,6 @@ export default function UserPage() {
                 initialData={selectedItem}
                 title={selectedItem ? "Editar Usuário" : "Novo Usuário"}
             />
-        </div>
+        </>
     )
 }

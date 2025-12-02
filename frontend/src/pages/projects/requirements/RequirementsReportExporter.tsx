@@ -2,7 +2,6 @@ import { useMemo, useState } from "react"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { useApi } from "@/hooks/useApi"
 import type { Requirement } from "@/types/requirement"
 import type { Project } from "@/types/project"
 
@@ -13,7 +12,6 @@ interface Props {
 }
 
 export function RequirementsReportExporter({ items, project, filters }: Props) {
-    const api = useApi()
     const [isGenerating, setIsGenerating] = useState(false)
 
     const generationLabel = useMemo(() => {
@@ -30,10 +28,32 @@ export function RequirementsReportExporter({ items, project, filters }: Props) {
             .replace(/'/g, "&#039;")
     }
 
+    const getFilterHeaderTypeLabel = (isRequiredFilter?: string) => {
+        switch (isRequiredFilter) {
+            case "functional":
+                return "Funcional"
+            case "nonFunctional":
+                return "Não-Funcional"
+            default:
+                return "Todos"
+        }
+    }
+
+    const getOrderHeaderTypeLabel = (priorityOrder?: string) => {
+        switch (priorityOrder) {
+            case "asc":
+                return "Crescente"
+            case "desc":
+                return "Decrescente"
+            default:
+                return "Nenhum"
+        }
+    }
+
     const buildReportHtml = () => {
         const projectName = project?.name || "—"
         const headerFilters = `
-      <div><strong>Filtros:</strong> Tipo = ${filters?.isRequiredFilter ?? "Todos"}; Ordenação prioridade = ${filters?.priorityOrder ?? "Nenhum"}</div>
+      <div><strong>Filtros:</strong> Tipo = ${getFilterHeaderTypeLabel(filters?.isRequiredFilter)}; Ordenação por prioridade = ${getOrderHeaderTypeLabel(filters?.priorityOrder)}</div>
     `
 
         const rows = items
@@ -138,38 +158,36 @@ export function RequirementsReportExporter({ items, project, filters }: Props) {
 
     const handleGenerate = async () => {
         try {
-            setIsGenerating(true)
-            const html = buildReportHtml()
+            setIsGenerating(true);
+            const html = buildReportHtml();
+            const filename = `requisitos_${project?.id || "project"}.pdf`;
 
-            const { data } = await api("/api/reports/requirements", {
+            const res = await fetch("http://localhost:4000/api/v1/pdf/html", {
                 method: "POST",
-                body: JSON.stringify({
-                    html,
-                    filename: `requisitos_${project?.id || "project"}.pdf`,
-                }),
-            })
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ html, filename }),
+                credentials: "same-origin",
+            });
 
-            if (data?.url) {
-                window.open(data.url, "_blank")
-                toast.success("PDF gerado com sucesso")
-            } else if (data?.blobBase64) {
-                const link = document.createElement("a")
-                link.href = `data:application/pdf;base64,${data.blobBase64}`
-                link.download = `requisitos_${project?.id || "project"}.pdf`
-                document.body.appendChild(link)
-                link.click()
-                link.remove()
-                toast.success("PDF gerado e baixado")
-            } else {
-                toast.success("PDF solicitado ao servidor")
-            }
-        } catch (err: any) {
-            console.error(err)
-            toast.error("Erro ao gerar PDF")
+            if (!res.ok) throw new Error();
+
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            toast.success("PDF gerado e baixado");
+        } catch {
+            toast.error("Erro ao gerar PDF");
         } finally {
-            setIsGenerating(false)
+            setIsGenerating(false);
         }
-    }
+    };
+
 
     return (
         <div className="space-y-3">

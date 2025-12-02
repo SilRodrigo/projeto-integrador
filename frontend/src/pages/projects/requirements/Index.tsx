@@ -98,6 +98,14 @@ export default function RequirementPage() {
     {
       key: 'description',
       label: 'Descrição',
+      render: (value) => (
+        <div
+          className="max-w-[320px] break-words whitespace-normal overflow-hidden"
+          title={value}
+        >
+          {value}
+        </div>
+      ),
     },
     {
       key: 'priority',

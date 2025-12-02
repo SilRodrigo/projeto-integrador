@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { IRequirement, requirementFactory } from "../../../entities/requirement";
 import { ICreateRequirementDto, IRequestRequirementDto, IUpdateRequirementDto } from "../../../dtos";
 import { PrismaBaseRepository } from "./abstract/BaseRepository";

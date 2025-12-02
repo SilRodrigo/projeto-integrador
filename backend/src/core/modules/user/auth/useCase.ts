@@ -20,10 +20,6 @@ export default function userAuthUseCaseFactory({
 }: IFactoryParams): IUserAuthUseCase {
     return {
         execute: async ({ email, password }) => {
-            if (!email || !password) {
-                throw new Error("Email and password are required.");
-            }
-
             const user = await prismaUserRepository.auth({ email, password });
 
             if (!user) {
