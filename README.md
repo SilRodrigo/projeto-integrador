@@ -65,7 +65,7 @@ Baixe o arquivo `.zip`, extraia para uma pasta e abra no terminal:
 
 ```bash
 
-cd programacao-para-internet-univates
+cd projeto-integrador
 
 ```
 
@@ -96,7 +96,7 @@ Crie as tabelas no banco de dados:
 npm run  prisma:db-push  --workspace  backend
 
 ```
-Para criar os usuarios, rode o *script_criacao_usuario.sql*
+Para criar o primeiro usuario, acesse o banco diretamente
 
   
 
